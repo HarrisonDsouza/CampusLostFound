@@ -158,6 +158,7 @@ fun RegisterScreen(
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text("Already have an account? ", style = MaterialTheme.typography.bodyMedium)
             TextButton(onClick = onNavigateToLogin) {

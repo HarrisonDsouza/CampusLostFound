@@ -120,6 +120,7 @@ fun LoginScreen(
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text("New here? ", style = MaterialTheme.typography.bodyMedium)
             TextButton(onClick = onNavigateToRegister) {

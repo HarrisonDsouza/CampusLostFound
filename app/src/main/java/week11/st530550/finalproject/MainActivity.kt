@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -26,7 +27,11 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun CampusLostFoundApp() {
     CampusLostFoundTheme {
-        Surface(modifier = Modifier.fillMaxSize()) {
+        // Surface defaults to colorScheme.surface, not .background — without this,
+        // the whole app paints in the same tone as the text fields, so nothing
+        // reads as "a field on a page" anymore. This was the root cause of the
+        // fields looking indistinguishable from the background on every screen.
+        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
             CampusLostFoundNavGraph()
         }
     }
