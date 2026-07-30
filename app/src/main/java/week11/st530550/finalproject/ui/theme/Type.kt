@@ -3,6 +3,7 @@
 package week11.st530550.finalproject.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -13,6 +14,8 @@ import week11.st530550.finalproject.R
 
 // Figtree ships as a single variable font file; each weight below points at the same
 // file with a different weight axis value instead of needing a separate file per weight.
+// FontVariation is still an experimental Compose API, hence the opt-in.
+@OptIn(ExperimentalTextApi::class)
 val FigtreeFamily = FontFamily(
     Font(R.font.figtree_variable, FontWeight.Normal, variationSettings = FontVariation.Settings(FontVariation.weight(400))),
     Font(R.font.figtree_variable, FontWeight.Medium, variationSettings = FontVariation.Settings(FontVariation.weight(500))),

@@ -12,6 +12,7 @@
 /captures
 .externalNativeBuild
 .cxx
+.kotlin/
 local.properties
 
 # Firebase config — each teammate adds their own copy locally, never commit it
