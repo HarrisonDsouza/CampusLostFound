@@ -18,8 +18,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import week11.st530550.finalproject.ui.theme.Danger
+import week11.st530550.finalproject.ui.theme.NeutralBorder
 import week11.st530550.finalproject.ui.theme.PillShape
 import week11.st530550.finalproject.ui.theme.Surface
+import week11.st530550.finalproject.ui.theme.TextPrimary
 
 /**
  * A labeled text field styled as a pill, matching the Figma "TextField" component.
@@ -50,7 +52,16 @@ fun AppTextField(
             onValueChange = onValueChange,
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
-            placeholder = placeholder?.let { { Text(it, style = MaterialTheme.typography.bodyMedium) } },
+            placeholder = placeholder?.let {
+                {
+                    Text(
+                        it,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TextPrimary.copy(alpha = 0.5f),
+                    )
+                }
+            },
+            textStyle = MaterialTheme.typography.bodyMedium,
             singleLine = true,
             shape = PillShape,
             visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
@@ -60,8 +71,15 @@ fun AppTextField(
                 focusedContainerColor = Surface,
                 unfocusedContainerColor = Surface,
                 disabledContainerColor = Surface,
+                cursorColor = MaterialTheme.colorScheme.primary,
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = Surface,
+                // Visible border at rest — matching the source design's
+                // `border: 1px solid divider` (previously this matched the fill
+                // color, which made every field look borderless/invisible).
+                unfocusedBorderColor = NeutralBorder,
+                disabledBorderColor = NeutralBorder,
+                focusedTextColor = TextPrimary,
+                unfocusedTextColor = TextPrimary,
             ),
         )
         if (errorText != null) {

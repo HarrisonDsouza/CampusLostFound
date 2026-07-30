@@ -2,6 +2,7 @@
 // Author: Harrison Dsouza
 package week11.st530550.finalproject.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -33,6 +38,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import week11.st530550.finalproject.common.UiState
 import week11.st530550.finalproject.ui.components.AppTextField
 import week11.st530550.finalproject.ui.components.PrimaryButton
+import week11.st530550.finalproject.ui.theme.NeutralBorder
 import week11.st530550.finalproject.viewmodel.RegisterViewModel
 
 @Composable
@@ -58,8 +64,19 @@ fun RegisterScreen(
             .padding(horizontal = 24.dp, vertical = 20.dp),
     ) {
         IconButton(onClick = onNavigateToLogin) {
-            Surface(shape = CircleShape, color = MaterialTheme.colorScheme.surface) {
-                Box(modifier = Modifier.size(38.dp))
+            Surface(
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.surface,
+                border = BorderStroke(1.dp, NeutralBorder),
+            ) {
+                Box(modifier = Modifier.size(38.dp), contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
             }
         }
 
@@ -70,7 +87,14 @@ fun RegisterScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Surface(shape = CircleShape, color = MaterialTheme.colorScheme.primaryContainer) {
-                Box(modifier = Modifier.size(52.dp))
+                Box(modifier = Modifier.size(52.dp), contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = Icons.Filled.Person,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.size(24.dp),
+                    )
+                }
             }
             Spacer(Modifier.height(8.dp))
             Text(

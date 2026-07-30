@@ -2,6 +2,7 @@
 // Author: Harrison Dsouza
 package week11.st530550.finalproject.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -27,6 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import week11.st530550.finalproject.common.UiState
 import week11.st530550.finalproject.ui.components.AppTextField
 import week11.st530550.finalproject.ui.components.PrimaryButton
+import week11.st530550.finalproject.ui.theme.NeutralBorder
 import week11.st530550.finalproject.viewmodel.ForgotPasswordViewModel
 
 @Composable
@@ -43,8 +49,19 @@ fun ForgotPasswordScreen(
             .padding(horizontal = 24.dp, vertical = 20.dp),
     ) {
         IconButton(onClick = onNavigateBack) {
-            Surface(shape = CircleShape, color = MaterialTheme.colorScheme.surface) {
-                Box(modifier = Modifier.size(38.dp))
+            Surface(
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.surface,
+                border = BorderStroke(1.dp, NeutralBorder),
+            ) {
+                Box(modifier = Modifier.size(38.dp), contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
             }
         }
 
@@ -57,7 +74,14 @@ fun ForgotPasswordScreen(
             ) {
                 Spacer(Modifier.height(40.dp))
                 Surface(shape = CircleShape, color = MaterialTheme.colorScheme.secondaryContainer) {
-                    Box(modifier = Modifier.size(56.dp))
+                    Box(modifier = Modifier.size(56.dp), contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Filled.Check,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                            modifier = Modifier.size(26.dp),
+                        )
+                    }
                 }
                 Spacer(Modifier.height(14.dp))
                 Text("Check your email", style = MaterialTheme.typography.titleLarge)
