@@ -1,5 +1,3 @@
-// Purpose: typography — Caprasimo for headings, Figtree for body text, matching the Figma prototype.
-// Author: Harrison Dsouza
 package week11.st530550.finalproject.ui.theme
 
 import androidx.compose.material3.Typography
@@ -12,8 +10,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import week11.st530550.finalproject.R
 
-// Figtree ships as a single variable font file; each weight below points at the same
-// file with a different weight axis value instead of needing a separate file per weight.
 // FontVariation is still an experimental Compose API, hence the opt-in.
 @OptIn(ExperimentalTextApi::class)
 val FigtreeFamily = FontFamily(

@@ -1,5 +1,3 @@
-// Purpose: shared bottom navigation bar (Browse / My Posts) matching the Figma BottomNav component.
-// Author: Harrison Dsouza
 package week11.st530550.finalproject.ui.components
 
 import androidx.compose.foundation.clickable

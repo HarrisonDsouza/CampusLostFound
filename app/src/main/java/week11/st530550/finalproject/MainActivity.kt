@@ -1,5 +1,3 @@
-// Purpose: app entry point — hosts the themed root Composable and the nav graph.
-// Author: Harrison Dsouza
 package week11.st530550.finalproject
 
 import android.os.Bundle
@@ -27,10 +25,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun CampusLostFoundApp() {
     CampusLostFoundTheme {
-        // Surface defaults to colorScheme.surface, not .background — without this,
-        // the whole app paints in the same tone as the text fields, so nothing
-        // reads as "a field on a page" anymore. This was the root cause of the
-        // fields looking indistinguishable from the background on every screen.
+        // Surface defaults to colorScheme.surface, not .background.
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
             CampusLostFoundNavGraph()
         }

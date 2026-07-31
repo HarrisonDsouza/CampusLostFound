@@ -1,5 +1,3 @@
-// Purpose: Post Lost Item screen — creates a new lostItems doc, or edits an existing one.
-// Author: Harrison Dsouza
 package week11.st530550.finalproject.ui.screens
 
 import androidx.compose.foundation.layout.Box

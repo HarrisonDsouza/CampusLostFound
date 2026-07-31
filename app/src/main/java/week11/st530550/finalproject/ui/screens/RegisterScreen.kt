@@ -1,5 +1,3 @@
-// Purpose: Register screen — creates a Firebase Auth account + users/{uid} profile doc.
-// Author: Harrison Dsouza
 package week11.st530550.finalproject.ui.screens
 
 import androidx.compose.foundation.BorderStroke

@@ -1,5 +1,3 @@
-// Purpose: form state + validation + submit logic for the Forgot Password screen.
-// Author: Harrison Dsouza
 package week11.st530550.finalproject.viewmodel
 
 import android.util.Patterns

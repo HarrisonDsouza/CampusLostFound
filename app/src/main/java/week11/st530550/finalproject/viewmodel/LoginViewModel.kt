@@ -1,5 +1,3 @@
-// Purpose: form state + validation + submit logic for the Login screen.
-// Author: Harrison Dsouza
 package week11.st530550.finalproject.viewmodel
 
 import android.util.Patterns
@@ -12,9 +10,7 @@ import kotlinx.coroutines.launch
 import week11.st530550.finalproject.common.UiState
 import week11.st530550.finalproject.data.AuthRepository
 
-// @JvmOverloads generates a true zero-arg constructor in bytecode (Kotlin default
-// parameters alone don't), which the default ViewModel factory needs to build this
-// via reflection when a Compose screen calls viewModel<LoginViewModel>().
+// @JvmOverloads gives this a real zero-arg constructor, which the ViewModel factory needs.
 class LoginViewModel @JvmOverloads constructor(
     private val repository: AuthRepository = AuthRepository(),
 ) : ViewModel() {
@@ -54,7 +50,6 @@ class LoginViewModel @JvmOverloads constructor(
             val result = repository.signIn(emailValue, passwordValue)
             _loginState.value = result.fold(
                 onSuccess = { UiState.Success(Unit) },
-                // Firebase's own exception message is surfaced directly, not a generic fallback.
                 onFailure = { UiState.Error(it.localizedMessage ?: "Login failed. Please try again.") },
             )
         }

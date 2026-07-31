@@ -1,5 +1,3 @@
-// Purpose: reads the live list of open lost items for the Browse screen.
-// Author: Harrison Dsouza
 package week11.st530550.finalproject.viewmodel
 
 import androidx.lifecycle.ViewModel

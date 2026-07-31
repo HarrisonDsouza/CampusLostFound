@@ -1,5 +1,3 @@
-// Purpose: form state for Post Lost Item — creates a new doc, or updates one when editItemId is set.
-// Author: Harrison Dsouza
 package week11.st530550.finalproject.viewmodel
 
 import androidx.lifecycle.ViewModel

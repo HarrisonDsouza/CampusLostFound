@@ -1,6 +1,3 @@
-// Purpose: the only class allowed to talk to Firestore for lostItems. ViewModels call these
-// suspend functions / Flows and never touch Firestore themselves — same pattern as AuthRepository.
-// Author: Harrison Dsouza
 package week11.st530550.finalproject.data
 
 import com.google.firebase.firestore.FirebaseFirestore

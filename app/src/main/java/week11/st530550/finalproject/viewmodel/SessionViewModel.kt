@@ -1,6 +1,3 @@
-// Purpose: exposes live Firebase Auth sign-in state so the nav graph can route between
-// the auth flow and the signed-in app without polling.
-// Author: Harrison Dsouza
 package week11.st530550.finalproject.viewmodel
 
 import androidx.lifecycle.ViewModel

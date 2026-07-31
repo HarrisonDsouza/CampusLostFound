@@ -1,5 +1,3 @@
-// Purpose: reusable lost-item card matching the Figma ItemCard component.
-// Author: Harrison Dsouza
 package week11.st530550.finalproject.ui.components
 
 import androidx.compose.foundation.layout.Column

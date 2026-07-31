@@ -1,5 +1,3 @@
-// Purpose: Forgot Password screen — sends a Firebase Auth password reset email.
-// Author: Harrison Dsouza
 package week11.st530550.finalproject.ui.screens
 
 import androidx.compose.foundation.BorderStroke

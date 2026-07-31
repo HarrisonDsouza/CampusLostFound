@@ -1,7 +1,3 @@
-// Purpose: the app's Compose Navigation graph. Signed-in users land on Browse, signed-out
-// users land on Login; successful login/register clears the auth back-stack so Back
-// doesn't return to the login screen once inside the app.
-// Author: Harrison Dsouza
 package week11.st530550.finalproject.navigation
 
 import androidx.compose.runtime.Composable

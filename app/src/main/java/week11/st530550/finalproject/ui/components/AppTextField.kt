@@ -1,5 +1,3 @@
-// Purpose: reusable label + pill-shaped input field matching the Figma TextField component.
-// Author: Harrison Dsouza
 package week11.st530550.finalproject.ui.components
 
 import androidx.compose.foundation.layout.Column
@@ -73,9 +71,6 @@ fun AppTextField(
                 disabledContainerColor = Surface,
                 cursorColor = MaterialTheme.colorScheme.primary,
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
-                // Visible border at rest — matching the source design's
-                // `border: 1px solid divider` (previously this matched the fill
-                // color, which made every field look borderless/invisible).
                 unfocusedBorderColor = NeutralBorder,
                 disabledBorderColor = NeutralBorder,
                 focusedTextColor = TextPrimary,

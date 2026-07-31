@@ -1,5 +1,3 @@
-// Purpose: reads the signed-in user's own lostItems, and lets them toggle status or delete.
-// Author: Harrison Dsouza
 package week11.st530550.finalproject.viewmodel
 
 import androidx.lifecycle.ViewModel

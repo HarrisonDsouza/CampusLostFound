@@ -1,5 +1,3 @@
-// Purpose: My Posts screen — the signed-in user's own lostItems, with edit/delete and a status toggle.
-// Author: Harrison Dsouza
 package week11.st530550.finalproject.ui.screens
 
 import androidx.compose.foundation.clickable

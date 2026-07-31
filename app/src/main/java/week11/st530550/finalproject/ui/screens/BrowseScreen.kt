@@ -1,5 +1,3 @@
-// Purpose: Browse screen — reads open lostItems live from Firestore, matches the Figma Browse screen.
-// Author: Harrison Dsouza
 package week11.st530550.finalproject.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
@@ -54,8 +52,7 @@ fun BrowseScreen(
         ) {
             Text(text = "Browse", style = MaterialTheme.typography.headlineSmall)
             Row(verticalAlignment = Alignment.CenterVertically) {
-                // Temporary stand-in for the Profile screen (out of Step 2 scope) — the
-                // only way to sign out and test with a different account for now.
+                // Stands in for the Profile screen until that's built.
                 TextButton(onClick = { viewModel.signOut(); onSignedOut() }) {
                     Text("Sign out", style = MaterialTheme.typography.bodySmall)
                 }

@@ -1,17 +1,10 @@
-// Purpose: shape of a lostItems/{itemId} Firestore document, per the proposal's data model.
-// Author: Harrison Dsouza
 package week11.st530550.finalproject.data
 
-// All properties need defaults so Firestore's automatic deserialization (toObject<LostItem>())
-// can construct this with a no-arg constructor. documentId is filled in manually after the
-// read (Firestore doesn't put the doc ID inside the document body itself).
+// Defaults required for Firestore's toObject<LostItem>() deserialization; documentId is set manually after the read.
 data class LostItem(
     val documentId: String = "",
     val ownerUid: String = "",
-    // Not in the proposal's original schema text, but the accepted Figma prototype's Post
-    // Lost Item form has an "Item" name field, and a Browse list is unusable without one
-    // (a card titled only by category tells nobody which black backpack is theirs).
-    // Deliberate, documented addition to the schema — not a silent scope change.
+    // name is not in the original proposal schema; added because the Figma form and Browse list need it.
     val name: String = "",
     val category: String = "",
     val colour: String = "",

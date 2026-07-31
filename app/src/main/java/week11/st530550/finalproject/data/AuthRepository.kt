@@ -1,7 +1,3 @@
-// Purpose: the only class allowed to talk to FirebaseAuth/Firestore directly for authentication.
-// ViewModels call these suspend functions and never touch Firebase themselves — same
-// direct-instantiation pattern (no DI framework) shown in Week 6.
-// Author: Harrison Dsouza
 package week11.st530550.finalproject.data
 
 import com.google.firebase.auth.FirebaseAuth

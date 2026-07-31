@@ -1,5 +1,3 @@
-// Purpose: reusable pill-shaped buttons (primary + secondary) matching the Figma Button component.
-// Author: Harrison Dsouza
 package week11.st530550.finalproject.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
