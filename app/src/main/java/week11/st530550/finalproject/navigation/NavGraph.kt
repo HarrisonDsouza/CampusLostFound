@@ -1,4 +1,4 @@
-// Purpose: the app's Compose Navigation graph. Signed-in users land on Home, signed-out
+// Purpose: the app's Compose Navigation graph. Signed-in users land on Browse, signed-out
 // users land on Login; successful login/register clears the auth back-stack so Back
 // doesn't return to the login screen once inside the app.
 // Author: Harrison Dsouza
@@ -9,12 +9,16 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import week11.st530550.finalproject.ui.screens.BrowseScreen
 import week11.st530550.finalproject.ui.screens.ForgotPasswordScreen
-import week11.st530550.finalproject.ui.screens.HomeScreen
 import week11.st530550.finalproject.ui.screens.LoginScreen
+import week11.st530550.finalproject.ui.screens.MyPostsScreen
+import week11.st530550.finalproject.ui.screens.PostLostItemScreen
 import week11.st530550.finalproject.ui.screens.RegisterScreen
 import week11.st530550.finalproject.viewmodel.SessionViewModel
 
@@ -24,7 +28,7 @@ fun CampusLostFoundNavGraph(
     sessionViewModel: SessionViewModel = viewModel(),
 ) {
     val currentUser by sessionViewModel.currentUser.collectAsStateWithLifecycle()
-    val startDestination = if (currentUser != null) Routes.HOME else Routes.LOGIN
+    val startDestination = if (currentUser != null) Routes.BROWSE else Routes.LOGIN
 
     NavHost(navController = navController, startDestination = startDestination) {
         composable(Routes.LOGIN) {
@@ -45,8 +49,10 @@ fun CampusLostFoundNavGraph(
                 onNavigateBack = { navController.popBackStack() },
             )
         }
-        composable(Routes.HOME) {
-            HomeScreen(
+        composable(Routes.BROWSE) {
+            BrowseScreen(
+                onPostLostItem = { navController.navigate(Routes.POST_LOST_ITEM) },
+                onNavigateToMyPosts = { navController.navigate(Routes.MY_POSTS) },
                 onSignedOut = {
                     navController.navigate(Routes.LOGIN) {
                         popUpTo(0) { inclusive = true }
@@ -54,12 +60,35 @@ fun CampusLostFoundNavGraph(
                 },
             )
         }
+        composable(Routes.MY_POSTS) {
+            MyPostsScreen(
+                onNavigateToBrowse = { navController.popBackStack() },
+                onEditItem = { itemId -> navController.navigate(Routes.editLostItem(itemId)) },
+            )
+        }
+        composable(Routes.POST_LOST_ITEM) {
+            PostLostItemScreen(
+                editItemId = null,
+                onNavigateBack = { navController.popBackStack() },
+                onSaved = { navController.popBackStack() },
+            )
+        }
+        composable(
+            route = Routes.EDIT_LOST_ITEM,
+            arguments = listOf(navArgument("itemId") { type = NavType.StringType }),
+        ) { backStackEntry ->
+            PostLostItemScreen(
+                editItemId = backStackEntry.arguments?.getString("itemId"),
+                onNavigateBack = { navController.popBackStack() },
+                onSaved = { navController.popBackStack() },
+            )
+        }
     }
 }
 
-/** Navigates to Home and drops every auth screen from the back stack. */
+/** Navigates to Browse and drops every auth screen from the back stack. */
 private fun NavHostController.navigateClearingAuthStack() {
-    navigate(Routes.HOME) {
+    navigate(Routes.BROWSE) {
         popUpTo(0) { inclusive = true }
     }
 }

@@ -6,5 +6,10 @@ object Routes {
     const val LOGIN = "login"
     const val REGISTER = "register"
     const val FORGOT_PASSWORD = "forgotPassword"
-    const val HOME = "home"
+    const val BROWSE = "browse"
+    const val MY_POSTS = "myPosts"
+    const val POST_LOST_ITEM = "postLostItem"
+    const val EDIT_LOST_ITEM = "postLostItem/{itemId}"
+
+    fun editLostItem(itemId: String) = "postLostItem/$itemId"
 }
