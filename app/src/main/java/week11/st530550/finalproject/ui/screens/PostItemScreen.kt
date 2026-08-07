@@ -153,7 +153,7 @@ fun PostItemScreen(
         )
         Spacer(Modifier.height(16.dp))
         AppDateField(
-            label = "Date Lost",
+            label = "Date $kindLabel",
             value = dateLost,
             onValueChange = viewModel::onDateLostChange,
             placeholder = "Select a date",
