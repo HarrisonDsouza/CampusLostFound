@@ -1,15 +1,19 @@
 package week11.st530550.finalproject.data
 
+import android.net.Uri
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 private const val COLLECTION = "lostItems"
+private const val PHOTOS_PATH = "itemPhotos"
 
 class LostItemRepository(
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance(),
+    private val storage: FirebaseStorage = FirebaseStorage.getInstance(),
 ) {
 
     /**
@@ -44,6 +48,13 @@ class LostItemRepository(
                 trySend(items.sortedByDescending { it.createdAt })
             }
         awaitClose { registration.remove() }
+    }
+
+    /** Uploads a found-item photo to Cloud Storage and returns its download URL. */
+    suspend fun uploadPhoto(ownerUid: String, localUri: Uri): Result<String> = runCatching {
+        val photoRef = storage.reference.child("$PHOTOS_PATH/$ownerUid/${System.currentTimeMillis()}.jpg")
+        photoRef.putFile(localUri).await()
+        photoRef.downloadUrl.await().toString()
     }
 
     suspend fun getById(itemId: String): Result<LostItem> = runCatching {

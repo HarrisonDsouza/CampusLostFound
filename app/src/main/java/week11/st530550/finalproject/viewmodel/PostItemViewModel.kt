@@ -116,6 +116,26 @@ class PostItemViewModel @JvmOverloads constructor(
         viewModelScope.launch {
             _submitState.value = UiState.Loading
             val current = editingItem
+            val uid = current?.ownerUid ?: authRepository.currentUser?.uid
+            if (uid == null) {
+                _submitState.value = UiState.Error("You're not signed in.")
+                return@launch
+            }
+
+            var photoUrlValue = _existingPhotoUrl.value
+            val pickedUri = _photoUri.value
+            if (pickedUri != null) {
+                val uploadResult = lostItemRepository.uploadPhoto(uid, pickedUri)
+                val uploadedUrl = uploadResult.getOrNull()
+                if (uploadedUrl == null) {
+                    _submitState.value = UiState.Error(
+                        uploadResult.exceptionOrNull()?.localizedMessage ?: "Couldn't upload the photo.",
+                    )
+                    return@launch
+                }
+                photoUrlValue = uploadedUrl
+            }
+
             val result = if (current != null) {
                 lostItemRepository.update(
                     current.copy(
@@ -126,11 +146,10 @@ class PostItemViewModel @JvmOverloads constructor(
                         description = _description.value.trim(),
                         dateLost = _dateLost.value.trim(),
                         status = _status.value,
+                        photoUrl = photoUrlValue,
                     ),
                 )
             } else {
-                val uid = authRepository.currentUser?.uid
-                    ?: return@launch run { _submitState.value = UiState.Error("You're not signed in.") }
                 lostItemRepository.create(
                     LostItem(
                         ownerUid = uid,
@@ -142,6 +161,7 @@ class PostItemViewModel @JvmOverloads constructor(
                         dateLost = _dateLost.value.trim(),
                         status = "open",
                         kind = _kind.value,
+                        photoUrl = photoUrlValue,
                     ),
                 )
             }
