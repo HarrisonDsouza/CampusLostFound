@@ -13,8 +13,10 @@ import androidx.navigation.navArgument
 import week11.st530550.finalproject.ui.screens.BrowseScreen
 import week11.st530550.finalproject.ui.screens.ForgotPasswordScreen
 import week11.st530550.finalproject.ui.screens.LoginScreen
+import week11.st530550.finalproject.ui.screens.MatchReviewScreen
 import week11.st530550.finalproject.ui.screens.MyPostsScreen
-import week11.st530550.finalproject.ui.screens.PostLostItemScreen
+import week11.st530550.finalproject.ui.screens.PostItemScreen
+import week11.st530550.finalproject.ui.screens.ProfileScreen
 import week11.st530550.finalproject.ui.screens.RegisterScreen
 import week11.st530550.finalproject.viewmodel.SessionViewModel
 
@@ -47,8 +49,27 @@ fun CampusLostFoundNavGraph(
         }
         composable(Routes.BROWSE) {
             BrowseScreen(
-                onPostLostItem = { navController.navigate(Routes.POST_LOST_ITEM) },
+                onPostItem = { kind -> navController.navigate(Routes.postItem(kind)) },
                 onNavigateToMyPosts = { navController.navigate(Routes.MY_POSTS) },
+                onNavigateToProfile = { navController.navigate(Routes.PROFILE) },
+                onViewMatch = { lostItemId, foundItemId ->
+                    navController.navigate(Routes.matchReview(lostItemId, foundItemId))
+                },
+            )
+        }
+        composable(Routes.MY_POSTS) {
+            MyPostsScreen(
+                onNavigateToBrowse = { navController.popBackStack() },
+                onNavigateToProfile = { navController.navigate(Routes.PROFILE) },
+                onEditItem = { itemId -> navController.navigate(Routes.editItem(itemId)) },
+                onViewMatch = { lostItemId, foundItemId ->
+                    navController.navigate(Routes.matchReview(lostItemId, foundItemId))
+                },
+            )
+        }
+        composable(Routes.PROFILE) {
+            ProfileScreen(
+                onNavigateBack = { navController.popBackStack() },
                 onSignedOut = {
                     navController.navigate(Routes.LOGIN) {
                         popUpTo(0) { inclusive = true }
@@ -56,27 +77,41 @@ fun CampusLostFoundNavGraph(
                 },
             )
         }
-        composable(Routes.MY_POSTS) {
-            MyPostsScreen(
-                onNavigateToBrowse = { navController.popBackStack() },
-                onEditItem = { itemId -> navController.navigate(Routes.editLostItem(itemId)) },
-            )
-        }
-        composable(Routes.POST_LOST_ITEM) {
-            PostLostItemScreen(
+        composable(
+            route = Routes.POST_ITEM,
+            arguments = listOf(navArgument("kind") { type = NavType.StringType }),
+        ) { backStackEntry ->
+            PostItemScreen(
+                createKind = backStackEntry.arguments?.getString("kind"),
                 editItemId = null,
                 onNavigateBack = { navController.popBackStack() },
                 onSaved = { navController.popBackStack() },
+                onDeleted = { navController.popBackStack() },
             )
         }
         composable(
-            route = Routes.EDIT_LOST_ITEM,
+            route = Routes.EDIT_ITEM,
             arguments = listOf(navArgument("itemId") { type = NavType.StringType }),
         ) { backStackEntry ->
-            PostLostItemScreen(
+            PostItemScreen(
+                createKind = null,
                 editItemId = backStackEntry.arguments?.getString("itemId"),
                 onNavigateBack = { navController.popBackStack() },
                 onSaved = { navController.popBackStack() },
+                onDeleted = { navController.popBackStack() },
+            )
+        }
+        composable(
+            route = Routes.MATCH_REVIEW,
+            arguments = listOf(
+                navArgument("lostItemId") { type = NavType.StringType },
+                navArgument("foundItemId") { type = NavType.StringType },
+            ),
+        ) { backStackEntry ->
+            MatchReviewScreen(
+                lostItemId = backStackEntry.arguments?.getString("lostItemId").orEmpty(),
+                foundItemId = backStackEntry.arguments?.getString("foundItemId").orEmpty(),
+                onNavigateBack = { navController.popBackStack() },
             )
         }
     }

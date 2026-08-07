@@ -1,5 +1,6 @@
 package week11.st530550.finalproject.ui.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import week11.st530550.finalproject.R
 import week11.st530550.finalproject.ui.theme.CardShape
 
 @Composable
@@ -20,6 +22,7 @@ fun ItemCard(
     category: String,
     building: String,
     dateLost: String,
+    kind: String,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -35,29 +38,37 @@ fun ItemCard(
             ) {}
             Column(modifier = Modifier.padding(start = 12.dp)) {
                 Text(text = name, style = MaterialTheme.typography.labelLarge)
-                Row {
-                    Surface(
-                        shape = RoundedCornerShape(50),
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                    ) {
-                        Text(
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    modifier = Modifier.padding(top = 2.dp),
+                ) {
+                    if (kind == "found") {
+                        Tag(
+                            text = "Found",
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        )
+                    } else {
+                        Tag(
                             text = "Lost",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                         )
                     }
+                    Text(
+                        text = category,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.55f),
+                        modifier = Modifier.padding(top = 4.dp),
+                    )
                 }
-                Text(
-                    text = category,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.55f),
-                )
-                Text(
-                    text = "$building  ·  $dateLost",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.55f),
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.padding(top = 4.dp),
+                ) {
+                    IconText(icon = R.drawable.ic_map_pin, text = building)
+                    IconText(icon = R.drawable.ic_calendar, text = dateLost)
+                }
             }
         }
     }

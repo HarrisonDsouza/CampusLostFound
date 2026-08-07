@@ -12,5 +12,5 @@ val Shapes = Shapes(
     small = RoundedCornerShape(14.dp),
     medium = RoundedCornerShape(20.dp),
     large = CardShape,
-    extraLarge = PillShape,
+    extraLarge = RoundedCornerShape(28.dp),
 )

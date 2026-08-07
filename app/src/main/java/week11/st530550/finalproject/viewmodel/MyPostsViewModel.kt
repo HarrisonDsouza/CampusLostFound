@@ -21,6 +21,12 @@ class MyPostsViewModel @JvmOverloads constructor(
     private val _items = MutableStateFlow<UiState<List<LostItem>>>(UiState.Loading)
     val items: StateFlow<UiState<List<LostItem>>> = _items.asStateFlow()
 
+    private val _itemPendingDelete = MutableStateFlow<LostItem?>(null)
+    val itemPendingDelete: StateFlow<LostItem?> = _itemPendingDelete.asStateFlow()
+
+    val profileInitial: String
+        get() = authRepository.currentUser?.email?.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
+
     init {
         val uid = authRepository.currentUser?.uid
         if (uid == null) {
@@ -32,16 +38,19 @@ class MyPostsViewModel @JvmOverloads constructor(
         }
     }
 
-    fun toggleStatus(item: LostItem) {
-        viewModelScope.launch {
-            val newStatus = if (item.status == "open") "resolved" else "open"
-            lostItemRepository.update(item.copy(status = newStatus))
-        }
+    fun requestDelete(item: LostItem) {
+        _itemPendingDelete.value = item
     }
 
-    fun delete(item: LostItem) {
+    fun cancelDelete() {
+        _itemPendingDelete.value = null
+    }
+
+    fun confirmDelete() {
+        val item = _itemPendingDelete.value ?: return
         viewModelScope.launch {
             lostItemRepository.delete(item.documentId)
         }
+        _itemPendingDelete.value = null
     }
 }

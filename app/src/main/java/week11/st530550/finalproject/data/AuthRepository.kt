@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
+private const val USERS_COLLECTION = "users"
+
 class AuthRepository(
     private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance(),
@@ -47,12 +49,42 @@ class AuthRepository(
             fcmToken = "",
             createdAt = System.currentTimeMillis(),
         )
-        firestore.collection("users").document(uid).set(profile).await()
+        firestore.collection(USERS_COLLECTION).document(uid).set(profile).await()
         Unit
     }
 
     suspend fun sendPasswordReset(email: String): Result<Unit> = runCatching {
         auth.sendPasswordResetEmail(email).await()
+        Unit
+    }
+
+    /** Live profile doc for the signed-in user — backs the Profile screen. */
+    fun observeProfile(uid: String): Flow<UserProfile> = callbackFlow {
+        val registration = firestore.collection(USERS_COLLECTION).document(uid)
+            .addSnapshotListener { snapshot, _ ->
+                snapshot?.toObject(UserProfile::class.java)?.let { trySend(it) }
+            }
+        awaitClose { registration.remove() }
+    }
+
+    suspend fun updateProfile(uid: String, displayName: String, notifyOnMatch: Boolean): Result<Unit> = runCatching {
+        firestore.collection(USERS_COLLECTION).document(uid).update(
+            mapOf(
+                "displayName" to displayName,
+                "notifyOnMatch" to notifyOnMatch,
+            ),
+        ).await()
+        Unit
+    }
+
+    /**
+     * Updates the email shown on the profile doc only — not the Firebase Auth sign-in
+     * credential itself. Changing the actual login email needs a recent-reauth + email-
+     * verification flow the course hasn't covered, so this keeps the field editable for
+     * display purposes without touching how the user signs in.
+     */
+    suspend fun updateProfileEmail(uid: String, newEmail: String): Result<Unit> = runCatching {
+        firestore.collection(USERS_COLLECTION).document(uid).update("email", newEmail).await()
         Unit
     }
 

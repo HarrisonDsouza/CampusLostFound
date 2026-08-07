@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -23,11 +21,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import week11.st530550.finalproject.R
 import week11.st530550.finalproject.common.UiState
 import week11.st530550.finalproject.ui.components.AppTextField
 import week11.st530550.finalproject.ui.components.PrimaryButton
@@ -60,10 +60,10 @@ fun LoginScreen(
             Surface(shape = CircleShape, color = MaterialTheme.colorScheme.primary) {
                 Box(modifier = Modifier.size(56.dp), contentAlignment = Alignment.Center) {
                     Icon(
-                        imageVector = Icons.Filled.Place,
+                        painter = painterResource(R.drawable.ic_map_pin),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(28.dp),
+                        modifier = Modifier.size(24.dp),
                     )
                 }
             }
@@ -74,7 +74,7 @@ fun LoginScreen(
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = "Reunite with your stuff, faster.",
+                text = "Reunite with your stuff at Sheridan College.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 textAlign = TextAlign.Center,
@@ -87,7 +87,7 @@ fun LoginScreen(
             label = "Email",
             value = email,
             onValueChange = viewModel::onEmailChange,
-            placeholder = "you@university.edu",
+            placeholder = "you@sheridancollege.ca",
             keyboardType = KeyboardType.Email,
         )
         Spacer(Modifier.height(16.dp))

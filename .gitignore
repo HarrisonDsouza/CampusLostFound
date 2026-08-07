@@ -1,12 +1,10 @@
 *.iml
 .gradle
 /local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+# Every teammate's Android Studio writes different local IDE files here (run
+# configs, gradle cache pointers, plugin migration flags) — ignore the whole
+# folder instead of chasing each new file version by version.
+/.idea/
 .DS_Store
 /build
 /captures
@@ -17,3 +15,6 @@ local.properties
 
 # Firebase config — each teammate adds their own copy locally, never commit it
 /app/google-services.json
+
+# Submission export, never part of the source tree
+*.zip

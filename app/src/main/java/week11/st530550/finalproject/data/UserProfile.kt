@@ -5,5 +5,6 @@ data class UserProfile(
     val displayName: String = "",
     val email: String = "",
     val fcmToken: String = "",
+    val notifyOnMatch: Boolean = true,
     val createdAt: Long = 0L,
 )

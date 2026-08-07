@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -22,11 +19,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import week11.st530550.finalproject.R
 import week11.st530550.finalproject.common.UiState
 import week11.st530550.finalproject.ui.components.AppTextField
 import week11.st530550.finalproject.ui.components.PrimaryButton
@@ -54,7 +53,7 @@ fun ForgotPasswordScreen(
             ) {
                 Box(modifier = Modifier.size(38.dp), contentAlignment = Alignment.Center) {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        painter = painterResource(R.drawable.ic_chevron_left),
                         contentDescription = "Back",
                         tint = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.size(20.dp),
@@ -74,7 +73,7 @@ fun ForgotPasswordScreen(
                 Surface(shape = CircleShape, color = MaterialTheme.colorScheme.secondaryContainer) {
                     Box(modifier = Modifier.size(56.dp), contentAlignment = Alignment.Center) {
                         Icon(
-                            imageVector = Icons.Filled.Check,
+                            painter = painterResource(R.drawable.ic_check),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSecondaryContainer,
                             modifier = Modifier.size(26.dp),
@@ -97,16 +96,16 @@ fun ForgotPasswordScreen(
             Text("Reset your password", style = MaterialTheme.typography.titleLarge)
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "Enter the email tied to your account and we'll send a reset link.",
+                text = "Enter the email tied to your Sheridan College account and we'll send a reset link.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
             )
             Spacer(Modifier.height(24.dp))
             AppTextField(
-                label = "School Email",
+                label = "Email",
                 value = email,
                 onValueChange = viewModel::onEmailChange,
-                placeholder = "you@university.edu",
+                placeholder = "you@sheridancollege.ca",
                 keyboardType = KeyboardType.Email,
                 errorText = (resetState as? UiState.Error)?.message,
             )

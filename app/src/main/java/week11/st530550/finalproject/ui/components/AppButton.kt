@@ -1,16 +1,23 @@
 package week11.st530550.finalproject.ui.components
 
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import week11.st530550.finalproject.ui.theme.PillShape
 
@@ -26,6 +33,7 @@ fun PrimaryButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     loading: Boolean = false,
+    @DrawableRes leadingIcon: Int? = null,
 ) {
     Button(
         onClick = onClick,
@@ -44,7 +52,7 @@ fun PrimaryButton(
                 strokeWidth = 2.dp,
             )
         } else {
-            Text(text = text, style = MaterialTheme.typography.labelLarge)
+            ButtonLabel(text, leadingIcon)
         }
     }
 }
@@ -56,6 +64,8 @@ fun SecondaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    @DrawableRes leadingIcon: Int? = null,
+    startAligned: Boolean = false,
 ) {
     OutlinedButton(
         onClick = onClick,
@@ -66,6 +76,22 @@ fun SecondaryButton(
             contentColor = MaterialTheme.colorScheme.onBackground,
         ),
     ) {
+        ButtonLabel(text, leadingIcon, startAligned)
+    }
+}
+
+@Composable
+private fun ButtonLabel(text: String, @DrawableRes leadingIcon: Int?, startAligned: Boolean = false) {
+    if (leadingIcon == null) {
         Text(text = text, style = MaterialTheme.typography.labelLarge)
+        return
+    }
+    Row(
+        modifier = if (startAligned) Modifier.fillMaxWidth() else Modifier,
+        horizontalArrangement = if (startAligned) Arrangement.Start else Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(painter = painterResource(leadingIcon), contentDescription = null, modifier = Modifier.size(18.dp))
+        Text(text = text, style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(start = 8.dp))
     }
 }

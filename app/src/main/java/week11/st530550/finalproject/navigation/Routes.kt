@@ -6,8 +6,12 @@ object Routes {
     const val FORGOT_PASSWORD = "forgotPassword"
     const val BROWSE = "browse"
     const val MY_POSTS = "myPosts"
-    const val POST_LOST_ITEM = "postLostItem"
-    const val EDIT_LOST_ITEM = "postLostItem/{itemId}"
+    const val PROFILE = "profile"
+    const val POST_ITEM = "postItem/{kind}"
+    const val EDIT_ITEM = "editItem/{itemId}"
+    const val MATCH_REVIEW = "matchReview/{lostItemId}/{foundItemId}"
 
-    fun editLostItem(itemId: String) = "postLostItem/$itemId"
+    fun postItem(kind: String) = "postItem/$kind"
+    fun editItem(itemId: String) = "editItem/$itemId"
+    fun matchReview(lostItemId: String, foundItemId: String) = "matchReview/$lostItemId/$foundItemId"
 }

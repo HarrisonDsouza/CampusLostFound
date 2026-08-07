@@ -14,9 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -28,11 +25,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import week11.st530550.finalproject.R
 import week11.st530550.finalproject.common.UiState
 import week11.st530550.finalproject.ui.components.AppTextField
 import week11.st530550.finalproject.ui.components.PrimaryButton
@@ -69,7 +68,7 @@ fun RegisterScreen(
             ) {
                 Box(modifier = Modifier.size(38.dp), contentAlignment = Alignment.Center) {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        painter = painterResource(R.drawable.ic_chevron_left),
                         contentDescription = "Back",
                         tint = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.size(20.dp),
@@ -87,7 +86,7 @@ fun RegisterScreen(
             Surface(shape = CircleShape, color = MaterialTheme.colorScheme.primaryContainer) {
                 Box(modifier = Modifier.size(52.dp), contentAlignment = Alignment.Center) {
                     Icon(
-                        imageVector = Icons.Filled.Person,
+                        painter = painterResource(R.drawable.ic_person),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier.size(24.dp),
@@ -101,7 +100,7 @@ fun RegisterScreen(
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = "Join your campus community.",
+                text = "Join the Sheridan College community.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 textAlign = TextAlign.Center,
@@ -121,7 +120,7 @@ fun RegisterScreen(
             label = "School Email",
             value = email,
             onValueChange = viewModel::onEmailChange,
-            placeholder = "you@university.edu",
+            placeholder = "you@sheridancollege.ca",
             keyboardType = KeyboardType.Email,
         )
         Spacer(Modifier.height(16.dp))

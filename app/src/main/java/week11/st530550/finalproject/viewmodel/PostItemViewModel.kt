@@ -11,10 +11,13 @@ import week11.st530550.finalproject.data.AuthRepository
 import week11.st530550.finalproject.data.LostItem
 import week11.st530550.finalproject.data.LostItemRepository
 
-class PostLostItemViewModel @JvmOverloads constructor(
+class PostItemViewModel @JvmOverloads constructor(
     private val lostItemRepository: LostItemRepository = LostItemRepository(),
     private val authRepository: AuthRepository = AuthRepository(),
 ) : ViewModel() {
+
+    private val _kind = MutableStateFlow("lost")
+    val kind: StateFlow<String> = _kind.asStateFlow()
 
     private val _name = MutableStateFlow("")
     val name: StateFlow<String> = _name.asStateFlow()
@@ -34,11 +37,22 @@ class PostLostItemViewModel @JvmOverloads constructor(
     private val _dateLost = MutableStateFlow("")
     val dateLost: StateFlow<String> = _dateLost.asStateFlow()
 
+    private val _status = MutableStateFlow("open")
+    val status: StateFlow<String> = _status.asStateFlow()
+
     private val _submitState = MutableStateFlow<UiState<Unit>>(UiState.Idle)
     val submitState: StateFlow<UiState<Unit>> = _submitState.asStateFlow()
 
+    private val _deleteState = MutableStateFlow<UiState<Unit>>(UiState.Idle)
+    val deleteState: StateFlow<UiState<Unit>> = _deleteState.asStateFlow()
+
     private var editingItem: LostItem? = null
     val isEditing: Boolean get() = editingItem != null
+
+    /** Sets the kind ("lost"/"found") for a brand-new post — ignored once editing an existing one. */
+    fun setKindForCreate(kind: String) {
+        if (!isEditing) _kind.value = kind
+    }
 
     fun onNameChange(value: String) { _name.value = value }
     fun onCategoryChange(value: String) { _category.value = value }
@@ -46,6 +60,7 @@ class PostLostItemViewModel @JvmOverloads constructor(
     fun onBuildingChange(value: String) { _building.value = value }
     fun onDescriptionChange(value: String) { _description.value = value }
     fun onDateLostChange(value: String) { _dateLost.value = value }
+    fun onStatusChange(value: String) { _status.value = value }
 
     /** Loads an existing item into the form so the user can edit it (My Posts → Edit). */
     fun loadForEdit(itemId: String) {
@@ -54,12 +69,14 @@ class PostLostItemViewModel @JvmOverloads constructor(
             val result = lostItemRepository.getById(itemId)
             result.onSuccess { item ->
                 editingItem = item
+                _kind.value = item.kind
                 _name.value = item.name
                 _category.value = item.category
                 _colour.value = item.colour
                 _building.value = item.building
                 _description.value = item.description
                 _dateLost.value = item.dateLost
+                _status.value = item.status
                 _submitState.value = UiState.Idle
             }.onFailure {
                 _submitState.value = UiState.Error(it.localizedMessage ?: "Couldn't load this item.")
@@ -89,6 +106,7 @@ class PostLostItemViewModel @JvmOverloads constructor(
                         building = buildingValue,
                         description = _description.value.trim(),
                         dateLost = _dateLost.value.trim(),
+                        status = _status.value,
                     ),
                 )
             } else {
@@ -104,12 +122,25 @@ class PostLostItemViewModel @JvmOverloads constructor(
                         description = _description.value.trim(),
                         dateLost = _dateLost.value.trim(),
                         status = "open",
+                        kind = _kind.value,
                     ),
                 )
             }
             _submitState.value = result.fold(
                 onSuccess = { UiState.Success(Unit) },
                 onFailure = { UiState.Error(it.localizedMessage ?: "Couldn't save this item.") },
+            )
+        }
+    }
+
+    fun deletePost() {
+        val itemId = editingItem?.documentId ?: return
+        viewModelScope.launch {
+            _deleteState.value = UiState.Loading
+            val result = lostItemRepository.delete(itemId)
+            _deleteState.value = result.fold(
+                onSuccess = { UiState.Success(Unit) },
+                onFailure = { UiState.Error(it.localizedMessage ?: "Couldn't delete this post.") },
             )
         }
     }

@@ -13,7 +13,7 @@ class LostItemRepository(
 ) {
 
     /**
-     * Live list of every open lost item, newest first — backs the Browse screen.
+     * Live list of every open post (lost and found), newest first — backs the Browse screen.
      *
      * Sorted client-side rather than with `.orderBy()` on purpose: combining an equality
      * filter (status) with an orderBy on a different field (createdAt) requires a Firestore
@@ -63,6 +63,9 @@ class LostItemRepository(
                 "description" to item.description,
                 "dateLost" to item.dateLost,
                 "status" to item.status,
+                "kind" to item.kind,
+                "photoUrl" to item.photoUrl,
+                "hasActiveMatch" to item.hasActiveMatch,
                 "createdAt" to System.currentTimeMillis(),
             ),
         ).await()
@@ -79,8 +82,14 @@ class LostItemRepository(
                 "description" to item.description,
                 "dateLost" to item.dateLost,
                 "status" to item.status,
+                "photoUrl" to item.photoUrl,
             ),
         ).await()
+        Unit
+    }
+
+    suspend fun clearActiveMatch(itemId: String): Result<Unit> = runCatching {
+        firestore.collection(COLLECTION).document(itemId).update("hasActiveMatch", false).await()
         Unit
     }
 

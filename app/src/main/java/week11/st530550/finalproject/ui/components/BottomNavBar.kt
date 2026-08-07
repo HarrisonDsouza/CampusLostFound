@@ -1,14 +1,12 @@
 package week11.st530550.finalproject.ui.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -16,8 +14,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import week11.st530550.finalproject.R
 
 enum class BottomNavTab { BROWSE, MY_POSTS }
 
@@ -37,13 +36,13 @@ fun BottomNavBar(
         ) {
             NavTabItem(
                 label = "Browse",
-                icon = Icons.Filled.Search,
+                icon = R.drawable.ic_search,
                 active = selected == BottomNavTab.BROWSE,
                 onClick = onBrowseClick,
             )
             NavTabItem(
                 label = "My Posts",
-                icon = Icons.AutoMirrored.Filled.List,
+                icon = R.drawable.ic_clipboard_list,
                 active = selected == BottomNavTab.MY_POSTS,
                 onClick = onMyPostsClick,
             )
@@ -54,7 +53,7 @@ fun BottomNavBar(
 @Composable
 private fun NavTabItem(
     label: String,
-    icon: ImageVector,
+    @DrawableRes icon: Int,
     active: Boolean,
     onClick: () -> Unit,
 ) {
@@ -69,7 +68,7 @@ private fun NavTabItem(
             .clickable(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Icon(imageVector = icon, contentDescription = label, tint = tint)
+        Icon(painter = painterResource(icon), contentDescription = label, tint = tint)
         Text(text = label, style = MaterialTheme.typography.labelSmall, color = tint)
     }
 }
