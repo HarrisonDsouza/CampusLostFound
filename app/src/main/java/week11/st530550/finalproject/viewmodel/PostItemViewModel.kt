@@ -1,5 +1,6 @@
 package week11.st530550.finalproject.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,6 +41,14 @@ class PostItemViewModel @JvmOverloads constructor(
     private val _status = MutableStateFlow("open")
     val status: StateFlow<String> = _status.asStateFlow()
 
+    /** A photo just picked from camera/gallery, not yet uploaded to Storage. */
+    private val _photoUri = MutableStateFlow<Uri?>(null)
+    val photoUri: StateFlow<Uri?> = _photoUri.asStateFlow()
+
+    /** The already-uploaded photo URL when editing an existing found item. */
+    private val _existingPhotoUrl = MutableStateFlow("")
+    val existingPhotoUrl: StateFlow<String> = _existingPhotoUrl.asStateFlow()
+
     private val _submitState = MutableStateFlow<UiState<Unit>>(UiState.Idle)
     val submitState: StateFlow<UiState<Unit>> = _submitState.asStateFlow()
 
@@ -62,6 +71,11 @@ class PostItemViewModel @JvmOverloads constructor(
     fun onDateLostChange(value: String) { _dateLost.value = value }
     fun onStatusChange(value: String) { _status.value = value }
 
+    /** Called once camera capture or gallery pick returns a local image Uri. */
+    fun onPhotoPicked(uri: Uri) {
+        _photoUri.value = uri
+    }
+
     /** Loads an existing item into the form so the user can edit it (My Posts → Edit). */
     fun loadForEdit(itemId: String) {
         viewModelScope.launch {
@@ -77,6 +91,7 @@ class PostItemViewModel @JvmOverloads constructor(
                 _description.value = item.description
                 _dateLost.value = item.dateLost
                 _status.value = item.status
+                _existingPhotoUrl.value = item.photoUrl
                 _submitState.value = UiState.Idle
             }.onFailure {
                 _submitState.value = UiState.Error(it.localizedMessage ?: "Couldn't load this item.")
@@ -91,6 +106,10 @@ class PostItemViewModel @JvmOverloads constructor(
 
         if (nameValue.isEmpty() || categoryValue.isEmpty() || buildingValue.isEmpty()) {
             _submitState.value = UiState.Error("Item, category, and building are required.")
+            return
+        }
+        if (_kind.value == "found" && _photoUri.value == null && _existingPhotoUrl.value.isEmpty()) {
+            _submitState.value = UiState.Error("Please add a photo of the found item.")
             return
         }
 

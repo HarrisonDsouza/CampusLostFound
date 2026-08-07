@@ -1,8 +1,19 @@
 package week11.st530550.finalproject.ui.screens
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -25,13 +37,25 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import week11.st530550.finalproject.R
 import week11.st530550.finalproject.common.CampusOptions
 import week11.st530550.finalproject.common.UiState
@@ -40,9 +64,11 @@ import week11.st530550.finalproject.ui.components.AppDateField
 import week11.st530550.finalproject.ui.components.AppDropdownField
 import week11.st530550.finalproject.ui.components.AppTextField
 import week11.st530550.finalproject.ui.components.PrimaryButton
+import week11.st530550.finalproject.ui.components.SecondaryButton
 import week11.st530550.finalproject.ui.theme.Danger
 import week11.st530550.finalproject.ui.theme.NeutralBorder
 import week11.st530550.finalproject.viewmodel.PostItemViewModel
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,6 +96,8 @@ fun PostItemScreen(
     val description by viewModel.description.collectAsStateWithLifecycle()
     val dateLost by viewModel.dateLost.collectAsStateWithLifecycle()
     val status by viewModel.status.collectAsStateWithLifecycle()
+    val photoUri by viewModel.photoUri.collectAsStateWithLifecycle()
+    val existingPhotoUrl by viewModel.existingPhotoUrl.collectAsStateWithLifecycle()
     val submitState by viewModel.submitState.collectAsStateWithLifecycle()
     val deleteState by viewModel.deleteState.collectAsStateWithLifecycle()
 
@@ -159,6 +187,15 @@ fun PostItemScreen(
             placeholder = "Select a date",
         )
 
+        if (kind == "found") {
+            Spacer(Modifier.height(16.dp))
+            FoundItemPhotoPicker(
+                photoUri = photoUri,
+                existingPhotoUrl = existingPhotoUrl,
+                onPhotoPicked = viewModel::onPhotoPicked,
+            )
+        }
+
         if (isEditing) {
             Spacer(Modifier.height(20.dp))
             Text(
@@ -217,4 +254,126 @@ fun PostItemScreen(
             }
         }
     }
+}
+
+/** Camera/gallery picker for a found item's photo — the picked Uri is uploaded to Storage on submit. */
+@Composable
+private fun FoundItemPhotoPicker(
+    photoUri: Uri?,
+    existingPhotoUrl: String,
+    onPhotoPicked: (Uri) -> Unit,
+) {
+    val context = LocalContext.current
+    var pendingCameraUri by remember { mutableStateOf<Uri?>(null) }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+    ) { success -> if (success) pendingCameraUri?.let(onPhotoPicked) }
+
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        if (granted) {
+            val uri = createCameraPhotoUri(context)
+            pendingCameraUri = uri
+            cameraLauncher.launch(uri)
+        }
+    }
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+    ) { uri -> uri?.let(onPhotoPicked) }
+
+    Column {
+        Text(
+            text = "Photo",
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+        )
+        Spacer(Modifier.height(5.dp))
+
+        val localPreview = rememberLocalPhotoPreview(photoUri)
+        when {
+            localPreview != null -> {
+                Image(
+                    bitmap = localPreview,
+                    contentDescription = "Selected photo",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(160.dp)
+                        .clip(RoundedCornerShape(14.dp)),
+                )
+                Spacer(Modifier.height(8.dp))
+            }
+            existingPhotoUrl.isNotEmpty() -> {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(14.dp),
+                    color = MaterialTheme.colorScheme.surface,
+                    border = BorderStroke(1.dp, NeutralBorder),
+                ) {
+                    Box(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = "Photo attached — pick a new one below to replace it",
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                    }
+                }
+                Spacer(Modifier.height(8.dp))
+            }
+        }
+
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            SecondaryButton(
+                text = "Take Photo",
+                leadingIcon = R.drawable.ic_camera,
+                modifier = Modifier.weight(1f),
+                onClick = {
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
+                        PackageManager.PERMISSION_GRANTED
+                    ) {
+                        val uri = createCameraPhotoUri(context)
+                        pendingCameraUri = uri
+                        cameraLauncher.launch(uri)
+                    } else {
+                        cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                    }
+                },
+            )
+            SecondaryButton(
+                text = "Choose from Gallery",
+                modifier = Modifier.weight(1f),
+                onClick = {
+                    galleryLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly),
+                    )
+                },
+            )
+        }
+    }
+}
+
+private fun createCameraPhotoUri(context: Context): Uri {
+    val photosDir = File(context.cacheDir, "camera_photos").apply { mkdirs() }
+    val file = File(photosDir, "found_${System.currentTimeMillis()}.jpg")
+    return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+}
+
+@Composable
+private fun rememberLocalPhotoPreview(uri: Uri?): ImageBitmap? {
+    val context = LocalContext.current
+    var bitmap by remember(uri) { mutableStateOf<ImageBitmap?>(null) }
+    LaunchedEffect(uri) {
+        bitmap = uri?.let {
+            withContext(Dispatchers.IO) {
+                runCatching {
+                    context.contentResolver.openInputStream(it)?.use { stream ->
+                        BitmapFactory.decodeStream(stream)?.asImageBitmap()
+                    }
+                }.getOrNull()
+            }
+        }
+    }
+    return bitmap
 }
