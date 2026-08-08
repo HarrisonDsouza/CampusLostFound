@@ -13,6 +13,12 @@ interface LostItemDoc {
   kind: string; // "lost" | "found"
 }
 
+interface MatchCandidate {
+  lostItemId: string;
+  lostOwnerUid: string;
+  score: number;
+}
+
 /**
  * Fires on every lostItems create (both kinds live in one collection), but only
  * scores candidates when the new doc is a found-item post.
@@ -38,6 +44,32 @@ export const detectMatchOnFoundItem = onDocumentCreated(
       .where("category", "==", foundItem.category)
       .get();
 
-    logger.info(`Found ${candidatesSnap.size} candidate(s) for found item ${foundItemId}`);
+    const matches: MatchCandidate[] = [];
+    for (const doc of candidatesSnap.docs) {
+      const lostItem = doc.data() as LostItemDoc;
+      let score = 0;
+      if (lostItem.building && lostItem.building === foundItem.building) score += 1;
+      if (lostItem.colour && lostItem.colour === foundItem.colour) score += 1;
+      if (score < 1) continue;
+
+      matches.push({ lostItemId: doc.id, lostOwnerUid: lostItem.ownerUid, score });
+    }
+
+    if (matches.length === 0) return;
+
+    await Promise.all(
+      matches.map((match) =>
+        db.collection("matches").add({
+          lostItemId: match.lostItemId,
+          foundItemId,
+          lostOwnerUid: match.lostOwnerUid,
+          score: match.score,
+          status: "pending",
+          createdAt: Date.now(),
+        }),
+      ),
+    );
+
+    logger.info(`Wrote ${matches.length} match(es) for found item ${foundItemId}`);
   },
 );
