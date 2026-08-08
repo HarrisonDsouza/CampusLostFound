@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
+import { getMessaging } from "firebase-admin/messaging";
 import { logger } from "firebase-functions";
 import { onDocumentCreated } from "firebase-functions/v2/firestore";
 
@@ -17,6 +18,10 @@ interface MatchCandidate {
   lostItemId: string;
   lostOwnerUid: string;
   score: number;
+}
+
+interface UserDoc {
+  fcmToken?: string;
 }
 
 /**
@@ -58,16 +63,33 @@ export const detectMatchOnFoundItem = onDocumentCreated(
     if (matches.length === 0) return;
 
     await Promise.all(
-      matches.map((match) =>
-        db.collection("matches").add({
+      matches.map(async (match) => {
+        const matchRef = await db.collection("matches").add({
           lostItemId: match.lostItemId,
           foundItemId,
           lostOwnerUid: match.lostOwnerUid,
           score: match.score,
           status: "pending",
           createdAt: Date.now(),
-        }),
-      ),
+        });
+
+        const userSnap = await db.collection("users").doc(match.lostOwnerUid).get();
+        const fcmToken = (userSnap.data() as UserDoc | undefined)?.fcmToken;
+        if (!fcmToken) return;
+
+        try {
+          await getMessaging().send({
+            token: fcmToken,
+            notification: {
+              title: "Possible match found",
+              body: `A found item may match your lost ${foundItem.category} post.`,
+            },
+            data: { matchId: matchRef.id, lostItemId: match.lostItemId, foundItemId },
+          });
+        } catch (error) {
+          logger.warn(`FCM send failed for match ${matchRef.id}`, error);
+        }
+      }),
     );
 
     logger.info(`Wrote ${matches.length} match(es) for found item ${foundItemId}`);
