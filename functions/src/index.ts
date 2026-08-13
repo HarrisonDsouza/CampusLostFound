@@ -73,6 +73,13 @@ export const detectMatchOnFoundItem = onDocumentCreated(
           createdAt: Date.now(),
         });
 
+        // The Android client's bell icon and "View Match" pill read hasActiveMatch/
+        // matchedItemId directly off the lost item doc, not the matches collection.
+        await db.collection("lostItems").doc(match.lostItemId).update({
+          hasActiveMatch: true,
+          matchedItemId: foundItemId,
+        });
+
         const userSnap = await db.collection("users").doc(match.lostOwnerUid).get();
         const fcmToken = (userSnap.data() as UserDoc | undefined)?.fcmToken;
         if (!fcmToken) return;
