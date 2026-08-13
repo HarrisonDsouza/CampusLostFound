@@ -1,6 +1,7 @@
 package week11.st530550.finalproject.ui.screens
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -38,6 +40,7 @@ import week11.st530550.finalproject.ui.components.BottomNavBar
 import week11.st530550.finalproject.ui.components.BottomNavTab
 import week11.st530550.finalproject.ui.components.IconText
 import week11.st530550.finalproject.ui.components.Tag
+import week11.st530550.finalproject.ui.components.rememberRemotePhoto
 import week11.st530550.finalproject.ui.theme.Danger
 import week11.st530550.finalproject.ui.theme.NeutralBorder
 import week11.st530550.finalproject.viewmodel.MyPostsViewModel
@@ -148,6 +151,7 @@ private fun MyPostCard(
     onDelete: () -> Unit,
     onViewMatch: () -> Unit,
 ) {
+    val photo = rememberRemotePhoto(item.photoUrl)
     Surface(
         modifier = Modifier.fillMaxWidth().clickable(onClick = onEdit),
         shape = MaterialTheme.shapes.large,
@@ -187,7 +191,16 @@ private fun MyPostCard(
                     modifier = Modifier.size(56.dp),
                     shape = RoundedCornerShape(14.dp),
                     color = MaterialTheme.colorScheme.primaryContainer,
-                ) {}
+                ) {
+                    if (photo != null) {
+                        Image(
+                            bitmap = photo,
+                            contentDescription = item.name,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    }
+                }
                 Column(modifier = Modifier.padding(start = 12.dp)) {
                     Text(text = item.name.ifBlank { "Untitled item" }, style = MaterialTheme.typography.labelLarge)
                     Row(

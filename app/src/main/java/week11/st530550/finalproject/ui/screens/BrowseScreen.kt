@@ -148,6 +148,7 @@ fun BrowseScreen(
                                     building = item.building,
                                     dateLost = item.dateLost,
                                     kind = item.kind,
+                                    photoUrl = item.photoUrl,
                                 )
                             }
                         }
